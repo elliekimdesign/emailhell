@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mailo — AI Email Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #111114;
+    --surface: #19191F;
+    --panel:   #1E1E26;
+    --border:  #2C2C38;
+    --border2: #383848;
+    --moss:    #4EB87A;
+    --moss-l:  #5FCC8E;
+    --moss-d:  #163024;
+    --ink:     #EEECEA;
+    --ink-s:   #A8A5A0;
+    --ink-m:   #5E5C58;
+    --blush:   #E8886A;
+    --sky:     #6FA3C8;
+    --sky-d:   #14222E;
+    --r:       12px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 20px; height:50px;
+    background:var(--surface); border-bottom:1px solid var(--border);
+    flex-shrink:0;
+  }
+
+  .logo { display:flex; align-items:center; gap:8px; }
+  .logo-mark {
+    width:28px; height:28px; background:var(--moss);
+    border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:13px;
+  }
+  .logo-name { font-family:'Lora',serif; font-size:19px; font-weight:500; letter-spacing:-0.3px; }
+  .logo-name span { color:var(--moss); }
+
+  .topbar-pills {
+    display:flex; gap:3px; background:var(--bg); border-radius:30px; padding:3px;
+  }
+  .pill {
+    padding:5px 16px; border-radius:24px; font-size:12px; font-weight:500;
+    cursor:pointer; border:none; background:transparent; color:var(--ink-s); transition:all .16s;
+  }
+  .pill.active { background:var(--panel); color:var(--ink); box-shadow:0 2px 8px rgba(0,0,0,.3); }
+
+  .topbar-right { display:flex; align-items:center; gap:10px; }
+
+  .send-all-btn {
+    display:flex; align-items:center; gap:5px;
+    padding:7px 15px; border-radius:20px; border:none;
+    background:var(--blush); color:white;
+    font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600;
+    cursor:pointer; transition:all .18s;
+  }
+  .send-all-btn:hover { background:#D97655; transform:translateY(-1px); box-shadow:0 4px 14px rgba(232,136,106,.35); }
+
+  .avatar {
+    width:28px; height:28px; border-radius:50%;
+    background:linear-gradient(135deg, var(--moss), var(--sky));
+    display:flex; align-items:center; justify-content:center;
+    color:white; font-size:10px; font-weight:700; cursor:pointer;
+  }
+
+  /* ── MAIN ── */
+  .main { flex:1; display:flex; overflow:hidden; }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width:54px; background:var(--surface); border-right:1px solid var(--border);
+    display:flex; flex-direction:column; align-items:center;
+    padding:12px 0; gap:3px; flex-shrink:0;
+  }
+  .sicon {
+    width:36px; height:36px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:15px; transition:all .15s;
+  }
+  .sicon:hover { background:var(--border); color:var(--ink); }
+  .sicon.active { background:var(--moss-d); color:var(--moss); }
+  .sidebar-spacer { flex:1; }
+
+  /* ── THREE PANELS ── */
+  .panels {
+    flex:1; display:grid;
+    grid-template-columns: 1fr 1fr 300px;
+    overflow:hidden;
+  }
+
+  .panel {
+    display:flex; flex-direction:column; overflow:hidden;
+    padding:18px 16px 14px; gap:12px;
+  }
+
+  .p1 { background:var(--bg); border-right:1px solid var(--border); }
+  .p2 { background:var(--panel); border-right:1px solid var(--border); }
+  .p3 { background:var(--bg); }
+
+  /* ── PANEL HEADER ── */
+  .ph { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+  .step {
+    width:20px; height:20px; border-radius:6px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:10px; font-weight:700; flex-shrink:0;
+  }
+  .p1 .step { background:var(--moss-d); color:var(--moss); }
+  .p2 .step { background:rgba(232,136,106,.15); color:var(--blush); }
+  .p3 .step { background:var(--sky-d); color:var(--sky); }
+
+  .ptitle { font-family:'Lora',serif; font-size:14px; font-weight:500; }
+  .psub { margin-left:auto; font-size:11px; color:var(--ink-m); }
+
+  /* ── CHAT ── */
+  .chat-area {
+    flex:1; overflow-y:auto;
+    display:flex; flex-direction:column; gap:10px;
+    padding-right:2px; min-height:0;
+  }
+  .chat-area::-webkit-scrollbar { width:3px; }
+  .chat-area::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px; }
+
+  .bubble {
+    max-width:90%; padding:10px 13px; border-radius:var(--r);
+    font-size:13px; line-height:1.55; animation:fu .2s ease;
+  }
+  @keyframes fu { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
+
+  .ba { background:var(--surface); border:1px solid var(--border); align-self:flex-start; border-bottom-left-radius:3px; }
+  .ai-tag { display:block; font-size:10px; font-weight:700; letter-spacing:.6px; color:var(--moss); margin-bottom:4px; }
+  .bu { background:var(--moss-d); border:1px solid #1E4A30; color:var(--ink); align-self:flex-end; border-bottom-right-radius:3px; }
+
+  .rcards { display:flex; flex-direction:column; gap:5px; margin-top:6px; }
+  .rcard {
+    background:var(--panel); border:1px solid var(--border); border-radius:9px;
+    padding:8px 10px; cursor:pointer; transition:all .14s;
+    display:flex; align-items:center; gap:8px;
+  }
+  .rcard:hover { border-color:var(--moss); transform:translateX(2px); }
+  .rcard.sel { border-color:var(--moss); background:var(--moss-d); }
+  .rcard-ico {
+    width:24px; height:24px; border-radius:6px;
+    background:var(--border); display:flex; align-items:center; justify-content:center;
+    font-size:12px; flex-shrink:0;
+  }
+  .rcard-body { flex:1; min-width:0; }
+  .rcard-t { font-size:12px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .rcard-s { font-size:11px; color:var(--ink-m); margin-top:1px; }
+  .rcard-chk {
+    width:15px; height:15px; border-radius:50%; border:1.5px solid var(--border2);
+    display:flex; align-items:center; justify-content:center;
+    font-size:8px; color:transparent; transition:all .14s; flex-shrink:0;
+  }
+  .rcard.sel .rcard-chk { background:var(--moss); border-color:var(--moss); color:white; }
+
+  .thinking {
+    display:flex; gap:4px; padding:10px 13px;
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--r);
+    border-bottom-left-radius:3px; align-self:flex-start; align-items:center;
+  }
+  .tdot { width:5px; height:5px; background:var(--moss); border-radius:50%; animation:bounce 1.1s infinite; }
+  .tdot:nth-child(2){animation-delay:.18s} .tdot:nth-child(3){animation-delay:.36s}
+  @keyframes bounce{0%,100%{transform:translateY(0);opacity:.3}50%{transform:translateY(-4px);opacity:1}}
+
+  .cinput-row { display:flex; gap:6px; align-items:flex-end; flex-shrink:0; }
+  .cinput {
+    flex:1; background:var(--surface); border:1px solid var(--border); border-radius:10px;
+    padding:9px 13px; font-family:'DM Sans',sans-serif; font-size:13px; color:var(--ink);
+    resize:none; outline:none; transition:border-color .16s; line-height:1.5;
+    min-height:40px; max-height:100px;
+  }
+  .cinput:focus { border-color:var(--moss); }
+  .cinput::placeholder { color:var(--ink-m); }
+  .csend {
+    width:36px; height:36px; border-radius:9px; border:none;
+    background:var(--moss); color:white; font-size:15px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; transition:all .16s; flex-shrink:0;
+  }
+  .csend:hover { background:var(--moss-l); transform:scale(1.05); }
+
+  /* ── EMAIL PANEL — modern compose ── */
+  .ctx-pill {
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--moss-d); border:1px solid #1E4A30;
+    border-radius:20px; padding:4px 10px 4px 8px;
+    font-size:11px; color:var(--moss); font-weight:500; flex-shrink:0; align-self:flex-start;
+  }
+  .ctx-pill .rm { cursor:pointer; opacity:.5; margin-left:3px; font-size:11px; }
+  .ctx-pill .rm:hover { opacity:1; }
+
+  /* SENDER SELECTOR */
+  .sender-row {
+    display:flex; align-items:center; gap:8px;
+    padding:10px 14px; border-bottom:1px solid var(--border); flex-shrink:0;
+  }
+  .sender-label {
+    font-size:10px; font-weight:700; letter-spacing:.7px;
+    color:var(--ink-m); text-transform:uppercase; flex-shrink:0;
+  }
+  .sender-accounts {
+    display:flex; gap:5px; flex:1; overflow-x:auto;
+  }
+  .sender-accounts::-webkit-scrollbar { display:none; }
+  .sender-opt {
+    display:flex; align-items:center; gap:6px;
+    padding:5px 10px; border-radius:20px; border:1px solid var(--border);
+    background:transparent; cursor:pointer; transition:all .15s; flex-shrink:0;
+    font-family:'DM Sans',sans-serif;
+  }
+  .sender-opt:hover { border-color:var(--border2); background:var(--border); }
+  .sender-opt.active { border-color:var(--moss); background:var(--moss-d); }
+  .sender-dot {
+    width:7px; height:7px; border-radius:50%; flex-shrink:0;
+  }
+  .sender-name { font-size:11px; font-weight:500; color:var(--ink-s); }
+  .sender-opt.active .sender-name { color:var(--moss); }
+  .sender-email { font-size:10px; color:var(--ink-m); }
+  .sender-opt.active .sender-email { color:var(--moss); opacity:.7; }
+
+  .compose-wrap {
+    flex:1; display:flex; flex-direction:column; min-height:0;
+    background:var(--surface); border-radius:14px; border:1px solid var(--border);
+    overflow:hidden;
+  }
+
+  /* subject row */
+  .csubject-row {
+    display:flex; align-items:center;
+    border-bottom:1px solid var(--border); flex-shrink:0; gap:8px; padding-right:10px;
+  }
+  .csubject-input {
+    flex:1; background:transparent; border:none; outline:none;
+    padding:13px 16px; font-family:'DM Sans',sans-serif;
+    font-size:14px; font-weight:600; color:var(--ink); letter-spacing:-0.2px;
+  }
+  .csubject-input::placeholder { color:var(--ink-m); font-weight:400; }
+
+  .ai-generate-btn {
+    width:28px; height:28px; border-radius:8px; border:none;
+    background:var(--border); color:var(--ink-s);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:all .16s; flex-shrink:0; font-size:14px;
+  }
+  .ai-generate-btn:hover { background:var(--moss-d); color:var(--moss); transform:scale(1.08); }
+
+  /* body area */
+  .cbody-area {
+    flex:1; display:flex; flex-direction:column; min-height:0; position:relative;
+  }
+
+  .cbody {
+    flex:1; background:transparent; border:none; outline:none; resize:none;
+    padding:14px 16px; font-family:'DM Sans',sans-serif;
+    font-size:13px; line-height:1.8; color:var(--ink);
+    min-height:0;
+  }
+  .cbody::placeholder { color:var(--ink-m); }
+
+
+
+  /* bottom bar */
+  .compose-bar {
+    display:flex; align-items:center; gap:4px;
+    padding:8px 10px; border-top:1px solid var(--border); flex-shrink:0;
+  }
+
+  .cbar-btn {
+    display:flex; align-items:center; gap:3px;
+    padding:5px 9px; border-radius:7px; border:none;
+    background:transparent; font-family:'DM Sans',sans-serif;
+    font-size:11px; color:var(--ink-m); cursor:pointer; transition:all .13s; white-space:nowrap;
+  }
+  .cbar-btn:hover { background:var(--border); color:var(--ink); }
+  .cbar-sep { width:1px; height:14px; background:var(--border); flex-shrink:0; margin:0 3px; }
+
+  .cbar-save {
+    margin-left:auto; padding:5px 13px; border-radius:7px;
+    border:1px solid var(--border2); background:transparent;
+    font-family:'DM Sans',sans-serif; font-size:11px; font-weight:500;
+    color:var(--ink-s); cursor:pointer; transition:all .15s;
+  }
+  .cbar-save:hover { background:var(--border); color:var(--ink); }
+
+  /* ── RECIPIENTS PANEL ── */
+  .rsearch-row { display:flex; gap:6px; flex-shrink:0; }
+  .rsearch {
+    flex:1; background:var(--surface); border:1px solid var(--border); border-radius:var(--r);
+    padding:8px 12px; font-family:'DM Sans',sans-serif; font-size:12px; color:var(--ink);
+    outline:none; transition:border-color .16s;
+  }
+  .rsearch:focus { border-color:var(--sky); }
+  .rsearch::placeholder { color:var(--ink-m); }
+  .add-btn {
+    padding:7px 12px; border-radius:var(--r); border:none; background:var(--sky-d); color:var(--sky);
+    font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600; cursor:pointer; transition:all .16s; white-space:nowrap;
+    border:1px solid #1E3A50;
+  }
+  .add-btn:hover { background:var(--sky); color:white; border-color:var(--sky); }
+
+  .sec-label { font-size:10px; font-weight:700; letter-spacing:.9px; color:var(--ink-m); text-transform:uppercase; flex-shrink:0; }
+
+  .chips-area { display:flex; flex-wrap:wrap; gap:5px; min-height:24px; flex-shrink:0; }
+  .chip {
+    display:flex; align-items:center; gap:5px; padding:3px 8px 3px 5px;
+    border-radius:20px; background:var(--sky-d); border:1px solid #1E3A50;
+    font-size:11px; color:var(--sky); font-weight:500; animation:fu .18s ease;
+  }
+  .chip-av { width:15px; height:15px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:7px; font-weight:700; color:white; }
+  .chip-rm { cursor:pointer; opacity:.45; font-size:11px; margin-left:1px; }
+  .chip-rm:hover { opacity:1; }
+  .no-r { font-size:11px; color:var(--ink-m); font-style:italic; }
+
+  .contacts-list { display:flex; flex-direction:column; gap:4px; overflow-y:auto; flex:1; min-height:0; }
+  .contacts-list::-webkit-scrollbar{width:3px}
+  .contacts-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+  .crow {
+    display:flex; align-items:center; gap:8px; padding:8px 10px;
+    border-radius:9px; border:1px solid transparent; background:var(--surface);
+    cursor:pointer; transition:all .14s; flex-shrink:0;
+  }
+  .crow:hover { border-color:var(--sky); background:var(--panel); }
+  .crow.added { border-color:#1E3A50; background:var(--sky-d); }
+
+  .cav { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; color:white; flex-shrink:0; }
+  .cinfo { flex:1; min-width:0; }
+  .cname { font-size:12px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .cemail { font-size:10px; color:var(--ink-m); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ctag { font-size:9px; font-weight:700; padding:2px 6px; border-radius:20px; flex-shrink:0; white-space:nowrap; letter-spacing:.3px; }
+  .ctag-add { background:var(--border); color:var(--ink-m); }
+  .ctag-added { background:var(--sky-d); color:var(--sky); border:1px solid #1E3A50; }
+
+  .send-summary {
+    background:linear-gradient(135deg, var(--sky-d), var(--moss-d));
+    border:1px solid #1E3A50; border-radius:var(--r);
+    padding:12px; display:flex; align-items:center; gap:10px; flex-shrink:0;
+  }
+  .ss-ico { font-size:18px; }
+  .ss-text { flex:1; }
+  .ss-title { font-size:12px; font-weight:600; }
+  .ss-sub { font-size:10px; color:var(--ink-m); margin-top:2px; }
+  .send-now {
+    padding:7px 14px; border-radius:20px; border:none; background:var(--blush); color:white;
+    font-family:'DM Sans',sans-serif; font-size:11px; font-weight:700; cursor:pointer; transition:all .16s; white-space:nowrap;
+  }
+  .send-now:hover { background:#D97655; transform:translateY(-1px); box-shadow:0 4px 12px rgba(232,136,106,.35); }
+
+  .divider { height:1px; background:var(--border); flex-shrink:0; }
+
+  /* ── STATUS BAR ── */
+  .statusbar {
+    height:24px; background:var(--surface); border-top:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 20px; flex-shrink:0;
+  }
+  .sl { display:flex; align-items:center; gap:5px; font-size:10px; color:var(--ink-m); }
+  .dot { width:5px; height:5px; border-radius:50%; background:var(--moss); animation:pulse 2s infinite; }
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+  .sc { font-size:10px; color:var(--ink-m); font-style:italic; font-family:'Lora',serif; }
+
+  /* ── TOAST ── */
+  .toast {
+    position:fixed; bottom:38px; left:50%; transform:translateX(-50%) translateY(10px);
+    background:#0A0A0D; color:var(--ink); border:1px solid var(--border2);
+    padding:8px 18px; border-radius:30px; font-size:12px;
+    opacity:0; transition:all .24s; z-index:100; pointer-events:none; white-space:nowrap;
+  }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-mark">
+      <svg width="15" height="12" viewBox="0 0 15 12" fill="none" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="1" y="1" width="13" height="10" rx="1.5"/>
+        <path d="M1 3l6.5 4.5L14 3"/>
+      </svg>
+    </div>
+    <div class="logo-name">mai<span>lo</span></div>
+  </div>
+  <div class="topbar-pills">
+    <button class="pill active">Compose</button>
+    <button class="pill">Inbox</button>
+    <button class="pill">Sent</button>
+  </div>
+  <div class="topbar-right">
+    <button class="send-all-btn" onclick="sendAll()">모두에게 보내기 ↗</button>
+    <div class="avatar">JS</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="sidebar">
+    <div class="sicon active" title="Compose">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11.5 2.5l2 2L6 12H4v-2l7.5-7.5z"/>
+        <path d="M2 14h12" opacity=".3"/>
+      </svg>
+    </div>
+    <div class="sicon" title="Templates">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="2" width="12" height="12" rx="2"/>
+        <path d="M5 5.5h6M5 8h6M5 10.5h4"/>
+      </svg>
+    </div>
+    <div class="sicon" title="Contacts">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="8" cy="5.5" r="2.5"/>
+        <path d="M2.5 13.5c0-3 2.5-4.5 5.5-4.5s5.5 1.5 5.5 4.5"/>
+      </svg>
+    </div>
+    <div class="sicon" title="History">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="8" cy="8" r="5.5"/>
+        <path d="M8 5v3.5l2 1.5"/>
+      </svg>
+    </div>
+    <div class="sidebar-spacer"></div>
+    <div class="sicon" title="Settings">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="8" cy="8" r="2"/>
+        <path d="M8 1.5v1.3M8 13.2v1.3M1.5 8h1.3M13.2 8h1.3M3.4 3.4l.9.9M11.7 11.7l.9.9M3.4 12.6l.9-.9M11.7 4.3l.9-.9"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="panels">
+
+    <!-- ① RESEARCH -->
+    <div class="panel p1">
+      <div class="ph">
+        <div class="step">1</div>
+        <div class="ptitle">Research</div>
+        <div class="psub">AI Search</div>
+      </div>
+
+      <div class="chat-area" id="chatArea">
+        <div class="bubble ba">
+          <span class="ai-tag">MAILO AI</span>
+          안녕하세요! 이메일에 필요한 정보를 찾아드릴게요. 무엇이든 검색해 보세요 🌿
+        </div>
+      </div>
+
+      <div class="cinput-row">
+        <textarea class="cinput" id="chatInput"
+          placeholder="회사 정보, 연락처, 뉴스 등 검색…"
+          rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+        <button class="csend" onclick="sendMessage()">↑</button>
+      </div>
+    </div>
+
+    <!-- ② EMAIL DRAFT — modern compose -->
+    <div class="panel p2">
+      <div class="ph">
+        <div class="step">2</div>
+        <div class="ptitle">Email Draft</div>
+        <div class="psub" id="draftStatus">—</div>
+      </div>
+
+      <!-- context pill (hidden by default) -->
+      <div class="ctx-pill" id="ctxBadge" style="display:none;">
+        <span>📎</span>
+        <span id="ctxText">컨텍스트</span>
+        <span class="rm" onclick="removeCtx()">✕</span>
+      </div>
+
+      <!-- compose card -->
+      <div class="compose-wrap">
+
+        <!-- sender selector -->
+        <div class="sender-row">
+          <div class="sender-label">From</div>
+          <div class="sender-accounts">
+            <button class="sender-opt active" onclick="selectSender(this)">
+              <div class="sender-dot" style="background:#4EB87A"></div>
+              <div>
+                <div class="sender-name">개인</div>
+                <div class="sender-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="81ebe0ece4f2c1e6ece0e8edafe2eeec">[email&#160;protected]</a></div>
+              </div>
+            </button>
+            <button class="sender-opt" onclick="selectSender(this)">
+              <div class="sender-dot" style="background:#6FA3C8"></div>
+              <div>
+                <div class="sender-name">회사</div>
+                <div class="sender-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fc969d91998fbc9f93918c9d9285d29593">[email&#160;protected]</a></div>
+              </div>
+            </button>
+            <button class="sender-opt" onclick="selectSender(this)">
+              <div class="sender-dot" style="background:#E8886A"></div>
+              <div>
+                <div class="sender-name">학교</div>
+                <div class="sender-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="86ece7ebe3f5c6f3e8eff0a8e7e5a8edf4">[email&#160;protected]</a></div>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- subject -->
+        <div class="csubject-row">
+          <input class="csubject-input" id="subjectField" type="text" placeholder="제목을 입력하세요…">
+          <button class="ai-generate-btn" title="AI 초안 생성" onclick="generateEmail()">✦</button>
+        </div>
+
+        <!-- body -->
+        <div class="cbody-area">
+          <textarea class="cbody" id="bodyField"
+            placeholder="내용을 입력하거나 AI 초안을 생성해 보세요…"
+           ></textarea>
+
+        </div>
+
+        <!-- bottom toolbar -->
+        <div class="compose-bar">
+          <button class="cbar-btn" onclick="rewriteEmail()">✨ 재작성</button>
+          <div class="cbar-sep"></div>
+          <button class="cbar-btn" onclick="shortenEmail()">✂️ 요약</button>
+          <button class="cbar-btn" onclick="formalEmail()">👔 공식체</button>
+          <button class="cbar-btn" onclick="casualEmail()">☀️ 친근체</button>
+          <button class="cbar-save" onclick="saveDraft()">임시저장</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ③ RECIPIENTS -->
+    <div class="panel p3">
+      <div class="ph">
+        <div class="step">3</div>
+        <div class="ptitle">Recipients</div>
+        <div class="psub" id="rcptCount">0명</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
+        <div class="sec-label">선택된 수신자</div>
+        <div class="chips-area" id="chipsArea">
+          <span class="no-r">아직 없어요</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="rsearch-row">
+        <input class="rsearch" id="rSearch" type="text"
+          placeholder="이름 또는 이메일…" oninput="filterContacts(this.value)">
+        <button class="add-btn" onclick="addManual()">+ 추가</button>
+      </div>
+
+      <div class="sec-label">추천 연락처</div>
+
+      <div class="contacts-list" id="contactsList"></div>
+
+      <div class="send-summary" id="sendSummary" style="display:none;">
+        <div class="ss-ico">📨</div>
+        <div class="ss-text">
+          <div class="ss-title" id="ssTitle">준비 완료</div>
+          <div class="ss-sub" id="ssSub">수신자와 초안 설정됨</div>
+        </div>
+        <button class="send-now" onclick="sendAll()">보내기 ↗</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- STATUS BAR -->
+<div class="statusbar">
+  <div class="sl"><div class="dot"></div>AI Connected</div>
+  <div class="sc" id="statusCenter">이메일 작성을 시작하세요</div>
+  <div class="sl">Feb 18, 2026</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  const CONTACTS = [
+    { name:'Sarah Lee',    email:'sarah.lee@acme.com',  color:'#3D8A60' },
+    { name:'James Kim',    email:'j.kim@venture.io',    color:'#5A8FB5' },
+    { name:'Mia Tanaka',   email:'mia@designstudio.co', color:'#C87060' },
+    { name:'David Park',   email:'d.park@techcorp.com', color:'#7060C8' },
+    { name:'Lena Fischer', email:'lena@growthlab.eu',   color:'#B07040' },
+    { name:'Tom Nakamura', email:'tom.n@startup.ai',    color:'#40A870' },
+    { name:'Aisha Rahman', email:'aisha@globalco.org',  color:'#B04060' },
+  ];
+
+  const AI_RESP = [
+    { text:'관련 정보를 찾았습니다. 초안에 활용할 항목을 선택해 주세요:', cards:[
+      { icon:'🏢', title:'Acme Inc. 회사 개요', sub:'창립 2015 · 직원 340명 · SaaS' },
+      { icon:'📰', title:'최근 뉴스', sub:'4,000만 달러 시리즈 B 펀딩 완료' },
+      { icon:'👤', title:'Sarah Lee 연락처', sub:'파트너십 총괄 · acme.com' },
+    ]},
+    { text:'검색 결과입니다. 이메일에 사용할 항목을 고르세요:', cards:[
+      { icon:'📊', title:'2025 시장 리포트', sub:'해당 섹터 YoY 성장률 23%' },
+      { icon:'🤝', title:'협업 기회 분석', sub:'전략적 적합도 높음 · 공통 클라이언트 3개' },
+    ]},
+    { text:'관련 자료를 찾았어요. 선택하면 초안에 반영됩니다:', cards:[
+      { icon:'📝', title:'미팅 메모', sub:'마지막 미팅: 12월 12일 · 팔로업 필요' },
+      { icon:'📧', title:'이전 이메일 스레드', sub:'4개 메시지 · 2주 전 마지막 답장' },
+    ]},
+  ];
+
+  const DRAFTS = [
+`안녕하세요 Sarah,
+
+최근 Acme Inc.의 시리즈 B 펀딩 소식을 접했습니다. 4,000만 달러 규모의 투자, 진심으로 축하드립니다!
+
+저는 [회사명]에서 파트너십을 담당하는 [이름]입니다. 공통 클라이언트 3곳과의 시너지 가능성을 탐색해보고 싶어 연락드렸습니다.
+
+이번 주 20분 정도 짧은 통화가 가능할까요?
+
+감사합니다,
+James`,
+`안녕하세요,
+
+2025 시장 리포트를 검토하다가 귀사의 인상적인 성장세(YoY 23%)를 확인했습니다.
+
+양측 모두에게 가치 있는 협업 방안을 제안드리고 싶습니다. 간단한 미팅을 통해 아이디어를 공유할 수 있을까요?
+
+감사합니다.`
+  ];
+
+  let resCtx = '';
+  let recipients = [];
+  let aiIdx = 0;
+
+  renderContacts(CONTACTS);
+
+  function initials(n){ return n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
+
+  function renderContacts(list){
+    const el = document.getElementById('contactsList');
+    el.innerHTML = '';
+    list.forEach(c => {
+      const added = recipients.some(r=>r.email===c.email);
+      const row = document.createElement('div');
+      row.className = 'crow' + (added?' added':'');
+      row.innerHTML = `
+        <div class="cav" style="background:${c.color}">${initials(c.name)}</div>
+        <div class="cinfo">
+          <div class="cname">${c.name}</div>
+          <div class="cemail">${c.email}</div>
+        </div>
+        <div class="ctag ${added?'ctag-added':'ctag-add'}">${added?'✓ 추가됨':'+ 추가'}</div>
+      `;
+      row.onclick = () => toggleR(c, row);
+      el.appendChild(row);
+    });
+  }
+
+  function filterContacts(q){
+    const f = q.toLowerCase();
+    renderContacts(CONTACTS.filter(c=>c.name.toLowerCase().includes(f)||c.email.toLowerCase().includes(f)));
+  }
+
+  function toggleR(c, row){
+    const idx = recipients.findIndex(r=>r.email===c.email);
+    if(idx===-1){
+      recipients.push(c);
+      row.classList.add('added');
+      row.querySelector('.ctag').className='ctag ctag-added';
+      row.querySelector('.ctag').textContent='✓ 추가됨';
+    } else {
+      recipients.splice(idx,1);
+      row.classList.remove('added');
+      row.querySelector('.ctag').className='ctag ctag-add';
+      row.querySelector('.ctag').textContent='+ 추가';
+    }
+    renderChips();
+  }
+
+  function renderChips(){
+    const area = document.getElementById('chipsArea');
+    area.innerHTML='';
+    document.getElementById('rcptCount').textContent = recipients.length+'명';
+    if(!recipients.length){
+      area.innerHTML='<span class="no-r">아직 없어요</span>';
+      document.getElementById('sendSummary').style.display='none';
+      return;
+    }
+    recipients.forEach(r=>{
+      const chip=document.createElement('div');
+      chip.className='chip';
+      chip.innerHTML=`<div class="chip-av" style="background:${r.color}">${initials(r.name)}</div><span>${r.name.split(' ')[0]}</span><span class="chip-rm" onclick="removeR('${r.email}')">✕</span>`;
+      area.appendChild(chip);
+    });
+    const hasDraft = document.getElementById('bodyField').value;
+    document.getElementById('sendSummary').style.display='flex';
+    document.getElementById('ssTitle').textContent = `${recipients.length}명에게 발송 준비`;
+    document.getElementById('ssSub').textContent = hasDraft ? '초안과 수신자 설정 완료' : '초안을 작성해 주세요';
+    setStatus(`수신자 ${recipients.length}명 선택됨`);
+  }
+
+  function removeR(email){
+    recipients=recipients.filter(r=>r.email!==email);
+    renderChips(); renderContacts(CONTACTS);
+  }
+
+  function addManual(){
+    const v=document.getElementById('rSearch').value.trim();
+    if(!v){showToast('이름 또는 이메일을 입력하세요');return;}
+    const c={name:v.includes('@')?v.split('@')[0]:v, email:v.includes('@')?v:v+'@email.com', color:'#555560'};
+    if(!recipients.some(r=>r.email===c.email)){recipients.push(c);renderChips();}
+    document.getElementById('rSearch').value='';
+  }
+
+  // ── CHAT ──
+  function sendMessage(){
+    const input=document.getElementById('chatInput');
+    const text=input.value.trim();
+    if(!text)return;
+    addBubble(text,'bu');
+    input.value=''; input.style.height='auto';
+    const t=document.createElement('div');
+    t.className='thinking';
+    t.innerHTML='<div class="tdot"></div><div class="tdot"></div><div class="tdot"></div>';
+    document.getElementById('chatArea').appendChild(t); scrollChat();
+    setTimeout(()=>{
+      t.remove();
+      const r=AI_RESP[aiIdx%AI_RESP.length]; aiIdx++;
+      addAIBubble(r.text, r.cards);
+      setStatus('결과를 클릭해 이메일 초안에 추가하세요');
+    },1100);
+  }
+
+  function addBubble(text,cls){
+    const d=document.createElement('div');
+    d.className='bubble '+cls; d.textContent=text;
+    document.getElementById('chatArea').appendChild(d); scrollChat();
+  }
+
+  function addAIBubble(text,cards){
+    const d=document.createElement('div');
+    d.className='bubble ba';
+    d.innerHTML=`<span class="ai-tag">MAILO AI</span>${text}`;
+    if(cards){
+      const cc=document.createElement('div'); cc.className='rcards';
+      cards.forEach(card=>{
+        const c=document.createElement('div'); c.className='rcard';
+        c.innerHTML=`<div class="rcard-ico">${card.icon}</div><div class="rcard-body"><div class="rcard-t">${card.title}</div><div class="rcard-s">${card.sub}</div></div><div class="rcard-chk">✓</div>`;
+        c.onclick=()=>selectCard(c,card); cc.appendChild(c);
+      });
+      d.appendChild(cc);
+    }
+    document.getElementById('chatArea').appendChild(d); scrollChat();
+  }
+
+  function scrollChat(){ const a=document.getElementById('chatArea'); setTimeout(()=>a.scrollTop=a.scrollHeight,40); }
+  function handleKey(e){ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();} }
+  function autoResize(el){ el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,100)+'px'; }
+
+  function selectCard(el,card){
+    el.classList.toggle('sel');
+    if(el.classList.contains('sel')){
+      resCtx=`${card.title}: ${card.sub}`;
+      document.getElementById('ctxText').textContent=card.title;
+      document.getElementById('ctxBadge').style.display='inline-flex';
+      setStatus(`"${card.title}" 컨텍스트 추가됨`);
+    } else {
+      resCtx='';
+      document.getElementById('ctxBadge').style.display='none';
+    }
+  }
+
+  function removeCtx(){
+    resCtx='';
+    document.getElementById('ctxBadge').style.display='none';
+    document.querySelectorAll('.rcard.sel').forEach(c=>c.classList.remove('sel'));
+  }
+
+  // ── EMAIL ──
+  function generateEmail(){
+    const draft=DRAFTS[Math.floor(Math.random()*DRAFTS.length)];
+    document.getElementById('subjectField').value='협업 제안 드립니다';
+    document.getElementById('bodyField').value=draft;
+    document.getElementById('draftStatus').textContent='AI 생성됨';
+    setStatus('초안 생성 완료 · 수신자를 추가하고 보내세요');
+    renderChips(); showToast('✦ 초안이 생성되었습니다');
+  }
+
+  function rewriteEmail(){ if(!document.getElementById('bodyField').value)return; setTimeout(()=>{ document.getElementById('draftStatus').textContent='재작성됨'; showToast('이메일을 재작성했습니다'); },600); }
+  function shortenEmail(){ const b=document.getElementById('bodyField').value; if(!b)return; const l=b.split('\n').filter(x=>x.trim()); document.getElementById('bodyField').value=l.slice(0,Math.ceil(l.length*.55)).join('\n'); showToast('요약되었습니다'); }
+  function formalEmail(){ if(!document.getElementById('bodyField').value)return; showToast('공식적인 문체로 변경되었습니다'); }
+  function casualEmail(){ if(!document.getElementById('bodyField').value)return; showToast('친근한 문체로 변경되었습니다 ☀️'); }
+  function saveDraft(){ showToast('임시저장 완료'); setStatus('임시저장됨'); }
+
+  function selectSender(el){
+    document.querySelectorAll('.sender-opt').forEach(b=>b.classList.remove('active'));
+    el.classList.add('active');
+    const name = el.querySelector('.sender-name').textContent;
+    setStatus(name + ' 계정으로 발신 설정됨');
+  }
+
+  function sendAll(){
+    if(!recipients.length){showToast('수신자를 추가해 주세요');return;}
+    if(!document.getElementById('bodyField').value){showToast('이메일 �
