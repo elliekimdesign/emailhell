@@ -10,6 +10,7 @@ const THREADS = [
     id: 1,
     subject: 'Q4 Partnership Proposal — Acme Inc.',
     read: false,
+    account: 1, // 0=개인, 1=회사, 2=학교
     recipient: { name: 'Sarah Lee', email: 'sarah.lee@acme.com', color: '#3D8A60' },
     messageCount: 9,
     lastActive: hoursAgo(2),
@@ -26,8 +27,8 @@ Would you have 30 minutes this week to walk through the proposal together? I'm f
 Looking forward to hearing your thoughts!
 
 Best,
-James` },
-      { from: 'Sarah Lee', text: `Hi James,
+kimkenny` },
+      { from: 'Sarah Lee', text: `Hi kimkenny,
 
 Thanks so much for following up — great to hear from you! I had a chance to look through the deck and it's definitely promising. The co-marketing scenario caught our VP of Partnerships' attention as well.
 
@@ -48,8 +49,8 @@ I'll also add a slide breaking down the co-marketing revenue split in more detai
 Is there anything else you'd like me to include or address before I send it over?
 
 Best,
-James` },
-      { from: 'Sarah Lee', text: `Hi James,
+kimkenny` },
+      { from: 'Sarah Lee', text: `Hi kimkenny,
 
 That's great, thank you! The additional co-marketing breakdown sounds really useful.
 
@@ -66,8 +67,8 @@ Tuesday at 3pm works perfectly — I'll block it now. I'll also confirm with our
 Should I go ahead and update the calendar invite to include your VP of Partnerships as well, or would you prefer to add him directly?
 
 Best,
-James` },
-      { from: 'Sarah Lee', text: `Hi James,
+kimkenny` },
+      { from: 'Sarah Lee', text: `Hi kimkenny,
 
 Yes, please update the invite — and could you also add David Chen from our BD team? He'll be leading the partnership evaluation on our end going forward, so it's important he's looped in from the start. His email is david.chen@acme.com.
 
@@ -81,6 +82,7 @@ Sarah` },
     id: 2,
     subject: 'Re: Design System Feedback — Sprint 12',
     read: false,
+    account: 2, // 0=개인, 1=회사, 2=학교
     recipient: { name: 'Mia Tanaka', email: 'mia@designstudio.co', color: '#C87060' },
     messageCount: 12,
     lastActive: hoursAgo(5),
@@ -97,8 +99,8 @@ I've linked the Figma file and the full token documentation below. Please let me
 Thanks so much for your time on this. Your feedback on Sprint 11 was incredibly valuable.
 
 Best,
-James` },
-      { from: 'Mia Tanaka', text: `Hi James,
+kimkenny` },
+      { from: 'Mia Tanaka', text: `Hi kimkenny,
 
 Thanks for sending this over! I went through everything carefully and the overall direction is really solid. The new brand palette feels much more cohesive and the typography hierarchy is a big improvement.
 
@@ -115,8 +117,8 @@ Great catch — I completely missed that. Thank you for running the contrast che
 I really appreciate you catching this before it went to production. Should I send you an updated Figma preview once I've made the change, so you can confirm before I finalize the tokens?
 
 Best,
-James` },
-      { from: 'Mia Tanaka', text: `Hi James,
+kimkenny` },
+      { from: 'Mia Tanaka', text: `Hi kimkenny,
 
 Yes, a quick preview would be great — just a screenshot of the button variants in dark mode should be enough.
 
@@ -131,8 +133,8 @@ Totally agree — adding --space-5 at 20px makes a lot of sense. I'll work it in
 I'll send over the updated dark mode preview alongside the full revised token set. Is there anything else you'd want me to address before I finalize the sprint? I want to make sure we don't need another revision cycle.
 
 Best,
-James` },
-      { from: 'Mia Tanaka', text: `Hi James,
+kimkenny` },
+      { from: 'Mia Tanaka', text: `Hi kimkenny,
 
 Just one last thing — the icon sizing on mobile viewports looks slightly large. The 24px icons feel a bit overwhelming on small screens; 20px might be a better default for anything below 375px breakpoint.
 
@@ -146,12 +148,13 @@ Mia` },
     id: 3,
     subject: 'Follow-up: Investment Memo Review',
     read: true,
-    recipient: { name: 'James Kimkenny', email: 'j.kim@venture.io', color: '#5A8FB5' },
+    account: 1, // 0=개인, 1=회사, 2=학교
+    recipient: { name: 'kimkenny Kimkenny', email: 'j.kim@venture.io', color: '#5A8FB5' },
     messageCount: 7,
     lastActive: hoursAgo(18),
     preview: 'We reviewed the memo internally. A few questions on the unit economics section — can we get on a call this week?',
     context: [
-      { from: 'James Kimkenny', text: `Hi,
+      { from: 'kimkenny Kimkenny', text: `Hi,
 
 Our team had a chance to sit down with the investment memo this week and we're genuinely impressed with the thesis. The market framing is tight, the problem statement is compelling, and the team section is one of the stronger ones we've seen this quarter.
 
@@ -160,51 +163,52 @@ That said, before we can move forward, we have some questions about the unit eco
 Would you be open to a short call this week to walk us through the methodology?
 
 Best,
-James K.` },
-      { from: 'me', text: `Hi James,
+kimkenny K.` },
+      { from: 'me', text: `Hi kimkenny,
 
 Really glad to hear the team found the memo compelling — and I completely welcome the scrutiny on the unit economics. You're right that the assumptions are aggressive; they're based on our current cohort data, but I'd love the chance to walk through the underlying logic in detail and show the sensitivity analysis we ran under more conservative scenarios.
 
 I'm available Thursday afternoon and most of Friday. Would either of those work for a 30-minute call? I can also prepare a short supplementary document covering the CAC calculation methodology ahead of the call if that would be helpful for the investment committee.
 
 Best,
-James` },
-      { from: 'James Kimkenny', text: `Hi James,
+kimkenny` },
+      { from: 'kimkenny Kimkenny', text: `Hi kimkenny,
 
 Friday afternoon works well on our end. A supplementary doc would be very useful — particularly if it addresses the LTV assumptions and how you've modeled for churn. The 18-month CAC payback period is the main sticking point for the committee right now.
 
 If you could have it ready by Thursday EOD, that would give us time to review before the call. We want to come prepared with specific questions rather than going in cold.
 
 Best,
-James K.` },
-      { from: 'me', text: `Hi James,
+kimkenny K.` },
+      { from: 'me', text: `Hi kimkenny,
 
 Absolutely — I'll have the supplementary doc in your inbox by Thursday at 5pm. It'll cover the full LTV and CAC methodology, including a sensitivity analysis showing how the payback period shifts under three different churn scenarios. I'll also include a note on the key assumptions that drive the model so the committee can see exactly where the levers are.
 
 What time on Friday works best for you?
 
 Best,
-James` },
-      { from: 'James Kimkenny', text: `Hi James,
+kimkenny` },
+      { from: 'kimkenny Kimkenny', text: `Hi kimkenny,
 
 Friday at 2pm works perfectly. I'll send a calendar invite with the video call link shortly — it'll just be myself and our associate, Priya, who's been leading the due diligence.
 
 Looking forward to the conversation. This is exactly the kind of diligence process we want to go through carefully before moving to a term sheet discussion.
 
 Best,
-James K.` },
+kimkenny K.` },
     ],
   },
   {
     id: 4,
     subject: 'Acme Inc. — Contract Amendment Draft',
     read: true,
+    account: 1, // 0=개인, 1=회사, 2=학교
     recipient: { name: 'Sarah Lee', email: 'sarah.lee@acme.com', color: '#3D8A60' },
     messageCount: 5,
     lastActive: daysAgo(3),
     preview: 'Legal has reviewed the amendment. A couple of minor redlines on section 4.2.',
     context: [
-      { from: 'Sarah Lee', text: `Hi James,
+      { from: 'Sarah Lee', text: `Hi kimkenny,
 
 Hope you're well! I wanted to give you an update on the contract amendment we sent over last week.
 
@@ -221,8 +225,8 @@ Thanks for the update — and glad to hear it's nothing major. I'll pass the red
 The shift from "aggregate liability" to "direct damages liability" sounds reasonable at first glance, though I'll want counsel to confirm the practical implications before we formally agree. I'll come back to you by Thursday at the latest.
 
 Best,
-James` },
-      { from: 'Sarah Lee', text: `Hi James,
+kimkenny` },
+      { from: 'Sarah Lee', text: `Hi kimkenny,
 
 That works perfectly — Thursday gives us just enough time to finalize before Friday. If your counsel has any questions or counter-proposals, feel free to have them reach out directly to our General Counsel, Monica Reyes (m.reyes@acme.com). She's briefed on the redlines and can turn around responses quickly.
 
@@ -236,6 +240,7 @@ Sarah` },
     id: 5,
     subject: 'Intro: GrowthLab x Us — Potential Collab',
     read: false,
+    account: 0, // 0=개인, 1=회사, 2=학교
     recipient: { name: 'Lena Fischer', email: 'lena@growthlab.eu', color: '#B07040' },
     messageCount: 6,
     lastActive: daysAgo(1),
@@ -262,8 +267,8 @@ I'd love to set up a conversation to explore potential collaboration. I'm thinki
 Would you be open to a 30-minute exploratory call next week?
 
 Best,
-James` },
-      { from: 'Lena Fischer', text: `Hi James,
+kimkenny` },
+      { from: 'Lena Fischer', text: `Hi kimkenny,
 
 A 30-minute exploratory call sounds like a great starting point — next week works well for me.
 
@@ -280,19 +285,20 @@ Monday or Tuesday next week work well for me. I'm flexible on timing — morning
 Looking forward to it!
 
 Best,
-James` },
+kimkenny` },
     ],
   },
   {
     id: 6,
     subject: 'AI Tools Evaluation — Vendor Shortlist',
     read: true,
+    account: 1, // 0=개인, 1=회사, 2=학교
     recipient: { name: 'David Park', email: 'd.park@techcorp.com', color: '#7060C8' },
     messageCount: 8,
     lastActive: hoursAgo(9),
     preview: 'We\'ve narrowed it down to three vendors. Your input on the integration complexity would really help.',
     context: [
-      { from: 'David Park', text: `Hi James,
+      { from: 'David Park', text: `Hi kimkenny,
 
 Hope you're well. I wanted to reach out because we've completed the initial AI vendor evaluation and narrowed the list down to three candidates: VendorA (a generalist LLM API provider), VendorB (specialized for document processing workflows), and VendorC (a custom fine-tuned solution built on an open-source base).
 
@@ -309,8 +315,8 @@ Happy to help with the evaluation — this is exactly the kind of decision that 
 Could you share the technical spec sheets for each vendor? I'd specifically want to look at the API architecture and versioning policy, rate limits and SLA structure, data residency and privacy handling, and what the migration path looks like if you ever need to switch. The last one is often overlooked but becomes very important later.
 
 Best,
-James` },
-      { from: 'David Park', text: `Hi James,
+kimkenny` },
+      { from: 'David Park', text: `Hi kimkenny,
 
 Sending the spec sheets over separately — you should have them in your inbox now.
 
@@ -327,8 +333,8 @@ Got the docs — I'll do a thorough review today and tomorrow. The VendorC authe
 I'll provide a brief risk assessment for all three vendors and flag anything that looks like a red flag. You'll have my full analysis by EOD tomorrow, well ahead of your Wednesday deadline.
 
 Best,
-James` },
-      { from: 'David Park', text: `Hi James,
+kimkenny` },
+      { from: 'David Park', text: `Hi kimkenny,
 
 Really appreciate you moving quickly on this. The board meeting is Thursday morning, so Wednesday EOD is a hard deadline for our recommendation.
 
@@ -342,12 +348,13 @@ David` },
     id: 7,
     subject: 'Re: Budget Approval — Q1 Campaign',
     read: true,
+    account: 1, // 0=개인, 1=회사, 2=학교
     recipient: { name: 'Lena Fischer', email: 'lena@growthlab.eu', color: '#B07040' },
     messageCount: 4,
     lastActive: daysAgo(4),
     preview: 'The revised budget looks reasonable. Just waiting on sign-off from the CFO.',
     context: [
-      { from: 'Lena Fischer', text: `Hi James,
+      { from: 'Lena Fischer', text: `Hi kimkenny,
 
 Just wanted to loop you in with a quick update on the Q1 campaign budget you submitted last week.
 
@@ -364,19 +371,20 @@ Thank you for the update, and for advocating for the budget on our end — I rea
 Once the CFO gives the green light, I'll brief the team immediately so we can start the campaign build-out without losing any lead time. If it would be helpful, I can also prepare a more detailed channel strategy and brief in the meantime so we're ready to hit the ground running as soon as the budget is confirmed. Just let me know.
 
 Best,
-James` },
+kimkenny` },
     ],
   },
   {
     id: 8,
     subject: 'Startup.ai — Onboarding & Next Steps',
     read: false,
+    account: 0, // 0=개인, 1=회사, 2=학교
     recipient: { name: 'Tom Nakamura', email: 'tom.n@startup.ai', color: '#40A870' },
     messageCount: 10,
     lastActive: hoursAgo(30),
     preview: 'Onboarding call was great! Here\'s a recap and the action items we agreed on.',
     context: [
-      { from: 'Tom Nakamura', text: `Hi James,
+      { from: 'Tom Nakamura', text: `Hi kimkenny,
 
 What a fantastic onboarding call today — the team was really impressed with your technical depth and the clarity of your implementation plan. You clearly came well-prepared, which makes our job much easier.
 
@@ -399,8 +407,8 @@ The recap looks accurate. I'll kick off the integration setup as soon as the san
 One thing I wanted to clarify before I begin: the documentation mentions both REST and GraphQL endpoints. Is the GraphQL API fully supported for production use, or would you recommend sticking with REST for the initial integration? Given the batch operations in our use case, GraphQL might be significantly more efficient, but I want to make sure we're building on stable ground.
 
 Best,
-James` },
-      { from: 'Tom Nakamura', text: `Hi James,
+kimkenny` },
+      { from: 'Tom Nakamura', text: `Hi kimkenny,
 
 Great question — and good instinct on the GraphQL front. The GraphQL API is fully production-ready and is actually our preferred option for complex queries and batch operations. You'll get much better performance and more flexibility compared to the REST endpoints. I'll flag this to our dev docs team to make the recommendation clearer in the onboarding materials.
 
@@ -419,8 +427,8 @@ I'm aiming to have the first integration milestone completed by February 27th as
 Looking forward to the Friday check-in!
 
 Best,
-James` },
-      { from: 'Tom Nakamura', text: `Hi James,
+kimkenny` },
+      { from: 'Tom Nakamura', text: `Hi kimkenny,
 
 Perfect — February 27th is in our milestone tracker. Any documentation feedback is always very welcome; we're actively improving the developer experience and real-world input is invaluable.
 
@@ -448,12 +456,12 @@ function getThreadResponses(thread) {
 }
 
 // ── Deduplication + sorting ──────────────────────────────────────────
-function getDisplayThreads() {
+function getDisplayThreads(activeAccount) {
   const DAYS_CUTOFF = 7
   const cutoff = new Date(now - DAYS_CUTOFF * 86400000)
 
-  // Filter ongoing only
-  const active = THREADS.filter(t => t.lastActive >= cutoff)
+  // Filter by active account and ongoing only
+  const active = THREADS.filter(t => t.lastActive >= cutoff && t.account === activeAccount)
 
   // Deduplicate by recipient email: keep best (most messages, then most recent)
   const byRecipient = {}
@@ -484,15 +492,8 @@ function relTime(date) {
 }
 
 // ── Component ────────────────────────────────────────────────────────
-export default function ResearchPanel({ setStatus }) {
-  const displayThreads = getDisplayThreads()
-
-  const [selectedThread, setSelectedThread] = useState(null)
-  const [chatMessages, setChatMessages] = useState([])
-  const [chatInput, setChatInput] = useState('')
-  const [thinking, setThinking] = useState(false)
-  const [aiIdx, setAiIdx] = useState(0)
-  const [historyOpen, setHistoryOpen] = useState(false)
+export default function ResearchPanel({ setStatus, selectedThread: globalSelectedThread, setSelectedThread: setGlobalSelectedThread, activeAccount }) {
+  const displayThreads = getDisplayThreads(activeAccount)
 
   // Track which threads have been read (opens = marks as read)
   const [readIds, setReadIds] = useState(
@@ -528,82 +529,24 @@ export default function ResearchPanel({ setStatus }) {
     document.addEventListener('mouseup', onUp)
   }
 
-  const chatRef = useRef(null)
-  const textareaRef = useRef(null)
-
-  useEffect(() => {
-    if (chatRef.current) {
-      setTimeout(() => { chatRef.current.scrollTop = chatRef.current.scrollHeight }, 40)
-    }
-  }, [chatMessages, thinking])
-
   const openThread = (thread) => {
-    setSelectedThread(thread)
-    setAiIdx(0)
-    setHistoryOpen(false)
+    setGlobalSelectedThread(thread)  // Pass to parent (App.jsx) so ThreadHistoryPanel and EmailDraftPanel can show it
     // Mark as read when opened
     setReadIds(prev => new Set([...prev, thread.id]))
-    setChatMessages([
-      {
-        type: 'ai',
-        text: `"${thread.subject}" 스레드를 불러왔어요.\n\n${thread.recipient.name}님과 총 ${thread.messageCount}번 주고받았고, 마지막 메시지: "${thread.preview}"\n\n이 스레드에 대해 궁금한 점이나 답장 준비를 도와드릴게요!`,
-      },
-    ])
-    setStatus(`"${thread.subject}" 스레드 분석 중`)
+    setStatus(`"${thread.subject}"`)
   }
-
-  const closeThread = () => {
-    setSelectedThread(null)
-    setChatMessages([])
-    setChatInput('')
-    setHistoryOpen(false)
-    setStatus('이메일 작성을 시작하세요')
-  }
-
-  const sendMessage = () => {
-    const text = chatInput.trim()
-    if (!text) return
-    setChatMessages(prev => [...prev, { type: 'user', text }])
-    setChatInput('')
-    if (textareaRef.current) textareaRef.current.style.height = 'auto'
-    setThinking(true)
-    setTimeout(() => {
-      setThinking(false)
-      const responses = getThreadResponses(selectedThread)
-      const resp = responses[aiIdx % responses.length]
-      setAiIdx(i => i + 1)
-      setChatMessages(prev => [...prev, { type: 'ai', text: resp.text }])
-    }, 1000)
-  }
-
-  const handleKey = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() }
-  }
-
-  const autoResize = (e) => {
-    e.target.style.height = 'auto'
-    e.target.style.height = Math.min(e.target.scrollHeight, 100) + 'px'
-  }
-
-  const latestMsg = selectedThread ? selectedThread.context[selectedThread.context.length - 1] : null
-  const earlierMsgs = selectedThread ? selectedThread.context.slice(0, -1) : []
 
   const gridCols = `${colWidths.sender}px 1fr ${colWidths.date}px`
 
   return (
     <div className="panel p1" style={{ gap: 0, padding: 0 }}>
 
-      {/* ══════════════════════════════════════
-          LIST MODE — no thread selected
-      ══════════════════════════════════════ */}
-      {!selectedThread && (<>
-
-        {/* Panel header */}
-        <div className="ph" style={{ padding: '18px 16px 14px', flexShrink: 0 }}>
-          <div className="step">1</div>
-          <div className="ptitle">Threads</div>
-          <div className="psub">Email History</div>
-        </div>
+      {/* Panel header */}
+      <div className="ph" style={{ padding: '18px 16px 14px', flexShrink: 0 }}>
+        <div className="step">1</div>
+        <div className="ptitle">Threads</div>
+        <div className="psub">Email History</div>
+      </div>
 
         {/* Column headers */}
         <div className="tl-section">
@@ -622,10 +565,11 @@ export default function ResearchPanel({ setStatus }) {
           <div className="tl-list">
             {displayThreads.map(thread => {
               const isRead = readIds.has(thread.id)
+              const isActive = globalSelectedThread && globalSelectedThread.id === thread.id
               return (
                 <div
                   key={thread.id}
-                  className={`ti${!isRead ? ' unread' : ''}`}
+                  className={`ti${!isRead ? ' unread' : ''}${isActive ? ' active' : ''}`}
                   style={{ gridTemplateColumns: gridCols }}
                   onClick={() => openThread(thread)}
                 >
@@ -652,108 +596,6 @@ export default function ResearchPanel({ setStatus }) {
           <div className="tl-empty-ico">💬</div>
           <div className="tl-empty-text">Click a thread to read it<br/>and get AI help replying</div>
         </div>
-
-      </>)}
-
-      {/* ══════════════════════════════════════
-          DETAIL MODE — thread selected
-      ══════════════════════════════════════ */}
-      {selectedThread && (<>
-
-        {/* Detail header — back button + subject */}
-        <div className="detail-header">
-          <button className="back-btn" onClick={closeThread}>← Back</button>
-          <div className="detail-meta">
-            <div className="detail-subject">{selectedThread.subject}</div>
-            <div className="detail-recipient">
-              <div className="cav" style={{ background: selectedThread.recipient.color, width: 16, height: 16, fontSize: 7, flexShrink: 0 }}>
-                {selectedThread.recipient.name.split(' ').map(w => w[0]).join('').slice(0, 2)}
-              </div>
-              {selectedThread.recipient.name}
-            </div>
-          </div>
-        </div>
-
-        {/* Primary email body — fills most of the vertical space */}
-        <div className="email-primary">
-          <div className="email-body-scroll">
-            <div className="email-body-from">
-              <div className="cav" style={{ background: latestMsg.from === 'me' ? 'var(--moss)' : selectedThread.recipient.color, width: 28, height: 28, fontSize: 10, flexShrink: 0 }}>
-                {latestMsg.from === 'me' ? 'ME' : selectedThread.recipient.name.split(' ').map(w => w[0]).join('').slice(0, 2)}
-              </div>
-              <div>
-                <div className="ebf-name">{latestMsg.from === 'me' ? 'You' : latestMsg.from}</div>
-                <div className="ebf-label">Latest message</div>
-              </div>
-            </div>
-            <div className="email-body-text">{latestMsg.text}</div>
-          </div>
-
-          {/* Thread history — collapsible */}
-          {earlierMsgs.length > 0 && (
-            <div className="thread-history">
-              <button className="history-toggle" onClick={() => setHistoryOpen(o => !o)}>
-                <span className="ht-arrow">{historyOpen ? '▲' : '▼'}</span>
-                {earlierMsgs.length} earlier {earlierMsgs.length === 1 ? 'message' : 'messages'}
-              </button>
-              {historyOpen && (
-                <div className="history-list">
-                  {earlierMsgs.map((msg, i) => (
-                    <div key={i} className={`history-msg ${msg.from === 'me' ? 'hmsg-me' : 'hmsg-them'}`}>
-                      <span className="hmsg-from">{msg.from === 'me' ? 'You' : msg.from}</span>
-                      <span className="hmsg-text">{msg.text}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* AI chat — secondary area below */}
-        <div className="thread-chat">
-          <div className="tctx">
-            <div className="tctx-ico">✦</div>
-            <div className="tctx-info">
-              <div className="tctx-subject">Ask AI about this thread</div>
-              <div className="tctx-name">Get help preparing your reply</div>
-            </div>
-          </div>
-
-          <div className="chat-area tl-chat-area" ref={chatRef}>
-            {chatMessages.map((msg, i) => (
-              msg.type === 'ai' ? (
-                <div key={i} className="bubble ba">
-                  <span className="ai-tag">MAILO AI</span>
-                  {msg.text}
-                </div>
-              ) : (
-                <div key={i} className="bubble bu">{msg.text}</div>
-              )
-            ))}
-            {thinking && (
-              <div className="thinking">
-                <div className="tdot"></div><div className="tdot"></div><div className="tdot"></div>
-              </div>
-            )}
-          </div>
-
-          <div className="cinput-row" style={{ padding: '0 12px 12px' }}>
-            <textarea
-              ref={textareaRef}
-              className="cinput"
-              value={chatInput}
-              placeholder="Ask about this thread or get help replying…"
-              rows={1}
-              onKeyDown={handleKey}
-              onInput={autoResize}
-              onChange={e => setChatInput(e.target.value)}
-            />
-            <button className="csend" onClick={sendMessage}>↑</button>
-          </div>
-        </div>
-
-      </>)}
     </div>
   )
 }

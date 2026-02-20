@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const SENDERS = [
-  { label: '개인', email: 'me@personal.com', color: '#4EB87A' },
-  { label: '회사', email: 'me@company.co', color: '#6FA3C8' },
-  { label: '학교', email: 'me@school.edu', color: '#E8886A' },
+  { label: '개인', email: 'kimkenny@personal.com', color: '#4EB87A' },
+  { label: '회사', email: 'kimkenny@company.co', color: '#6FA3C8' },
+  { label: '학교', email: 'kimkenny@school.edu', color: '#E8886A' },
 ]
 
 const DRAFTS = [
@@ -15,9 +15,18 @@ export default function EmailDraftPanel({
   subject, setSubject, body, setBody,
   context, setContext,
   setStatus, showToast, recipientCount,
+  selectedThread,
+  activeAccount,
 }) {
-  const [activeSender, setActiveSender] = useState(0)
+  const [activeSender, setActiveSender] = useState(activeAccount || 0)
   const [draftStatus, setDraftStatus] = useState('—')
+
+  // Sync sender with global active account
+  useEffect(() => {
+    if (activeAccount !== undefined) {
+      setActiveSender(activeAccount)
+    }
+  }, [activeAccount])
 
   const generateEmail = () => {
     const draft = DRAFTS[Math.floor(Math.random() * DRAFTS.length)]
@@ -43,11 +52,11 @@ export default function EmailDraftPanel({
   const removeCtx = () => setContext(null)
 
   return (
-    <div className="panel p2">
+    <div className="panel p3">
       <div className="ph">
-        <div className="step">2</div>
+        <div className="step">3</div>
         <div className="ptitle">Email Draft</div>
-        <div className="psub">{draftStatus}</div>
+        <div className="psub">{selectedThread ? `Re: ${selectedThread.subject}` : draftStatus}</div>
       </div>
 
       {context && (

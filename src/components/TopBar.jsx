@@ -19,7 +19,7 @@ export default function TopBar({ onSendAll }) {
 
       <div className="topbar-right">
         <button className="send-all-btn" onClick={onSendAll}>모두에게 보내기 ↗</button>
-        <div className="avatar">JS</div>
+        <div className="avatar">SK</div>
       </div>
     </div>
   )
